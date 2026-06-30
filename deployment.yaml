@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloudtask-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cloudtask-api
+  template:
+    metadata:
+      labels:
+        app: cloudtask-api
+    spec:
+      containers:
+      - name: cloudtask-api
+        image: cloudtask-ai:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cloudtask-service
+spec:
+  selector:
+    app: cloudtask-api
+  ports:
+  - protocol: TCP
+    port: 8000
+    targetPort: 8000
+  type: NodePort
