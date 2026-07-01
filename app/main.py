@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, UploadFile, File
 from .database import engine, Base, SessionLocal
 from .models import Usuario, Tarefa
 from .schemas import UsuarioCreate, TarefaCreate, Login
@@ -186,4 +186,22 @@ def login(login: Login):
 
     return {
         "mensagem": "Usuário não encontrado."
+    }
+
+
+# ==========================
+# UPLOAD DE ARQUIVOS
+# ==========================
+
+@app.post("/upload")
+async def upload_arquivo(arquivo: UploadFile = File(...)):
+
+    conteudo = await arquivo.read()
+
+    with open(arquivo.filename, "wb") as f:
+        f.write(conteudo)
+
+    return {
+        "mensagem": "Arquivo enviado com sucesso!",
+        "arquivo": arquivo.filename
     }
