@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from .database import engine, Base, SessionLocal
 from .models import Usuario, Tarefa
-from .schemas import UsuarioCreate, TarefaCreate
+from .schemas import UsuarioCreate, TarefaCreate, Login
 
 app = FastAPI()
 
@@ -160,4 +160,30 @@ def deletar_tarefa(id: int):
 
     return {
         "mensagem": "Tarefa excluída com sucesso"
+    }
+
+
+# ==========================
+# LOGIN
+# ==========================
+
+@app.post("/login")
+def login(login: Login):
+
+    db = SessionLocal()
+
+    usuario = db.query(Usuario).filter(
+        Usuario.email == login.email
+    ).first()
+
+    db.close()
+
+    if usuario:
+        return {
+            "mensagem": "Login realizado com sucesso!",
+            "usuario": usuario.nome
+        }
+
+    return {
+        "mensagem": "Usuário não encontrado."
     }
